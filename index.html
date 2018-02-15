@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Dobroteka</title>
+		<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body { 
+				margin: 0;
+				overflow:hidden;
+				font-family: 'Raleway', sans-serif;
+			}
+			canvas { width: 100%;
+			 height: 100%;
+			  
+			 }
+			 form{
+			 	position:absolute;
+			 }
+			 .fileInput{
+			 	display:none;
+			 }
+			 .fileButton{
+			 	position: absolute;
+			 	right:0;
+			 }
+			 .list-container{
+			 	position:absolute;
+			 	top:0;
+			 	left:0;
+			 	width:13%;
+			 	min-height: 100%;
+			 	height:100%;
+			 	background-color: #5d6166;
+			 }
+			 #materials-list{
+			 	display:flex;
+			 	flex-wrap:wrap;
+			 	list-style-type: none;
+			 	padding:0;
+			 	margin:0;
+			 	justify-content: center;
+			 	
+			 }
+			 #materials-list > li{
+			 	width:100%;
+			 	text-align:center;
+			 	font-size:1.4rem;
+			 	color:white;
+			 }
+
+			 #materials-list > li:hover{
+			 	opacity: 0.8;
+			 	cursor: pointer;
+			 }
+				
+			 .list-menu{
+					display:none!important;
+				}
+
+			 @media (max-width: 600px) {
+			 	.active{
+			 	display:block;
+			 	}
+			 	.not-active{
+			 		display:none;
+			 	}
+
+			 	.list-container{
+			 		background-color: transparent;
+			 		width:100%;
+			 		margin-top:4%;
+			 	}
+
+			 	#materials-list{
+			 		background-color: #313233;
+			 	}
+
+			 	#materials-list > li{
+			 	width:100%;
+			 	}
+
+			 	}
+			 	.hamburger {
+			 		z-index:2;
+				  width: 40px;
+				  height: 35px;
+				  border: 0;
+				  border-top: 5px solid #ffffff;
+				  background: transparent;
+				  position: relative;
+				  transition: 0.3s transform linear;
+				}
+
+				.hamburger::before, .hamburger::after {
+				  content: '';
+				  position: absolute;
+				  top: 0;
+				  left: 0;
+				  width: 100%;
+				  border-top: 5px solid #ffffff;
+				  transform: translateY(10px);
+				}
+
+				.hamburger::after {
+				  transform: translateY(25px);
+				  transition: 0.3s transform linear;
+				}
+
+				.hamburger:focus {
+				  transform: rotate(45deg) translateY(5px);
+				  border: none;
+				}
+
+				.hamburger:focus::after {
+				  transform: rotate(-90deg) translateX(-10px);
+				}
+
+				.list-menu{
+					display:block;
+					width:100%;
+					position: absolute;
+					top:0;
+					left:0;
+					padding:0.1em;
+					background-color: #313233;
+				}
+
+	  			
+
+			}
+		</style>
+	</head>
+	<body>
+		<div class="list-menu"><button id="list-button" class="hamburger"></button></div>
+		<div class="list-container not-active" id="list-container">
+			<ul id="materials-list">
+				<li>Wybierz materiał</i> </li>
+			</ul>
+		</div>
+		<div class="GUI">
+			<!-- <input id ="fileInput" class="fileInput" type="file">
+			<button type="button" class = "fileButton" onclick='document.getElementById("fileInput").click()'>Wybierz zdjęcie...</button> -->
+		</div>
+		<script src="js/three.js"></script>
+		<script src="js/TDSLoader.js"></script>
+		<script src="js/OrbitControls.js"></script>
+<!-- 		<script src="js/gui.js"></script>
+ -->		<script src="js/app.js"></script>
+
+	</body>
+</html>
