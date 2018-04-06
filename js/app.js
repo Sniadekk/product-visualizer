@@ -48,7 +48,7 @@ class App {
             opacity: 0.65,
             side: THREE.DoubleSide
         });
-        this.materials = [];
+        this.materials = {};
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -106,7 +106,8 @@ class App {
     }
 
     setMaterials() {
-        materialConfig.map((item) => console.log(item));
+        console.log(this.materials);
+        this.object.children.map((object, index) => object.material = this.materials[materialConfig[index].material]);
     }
 
     checkIntersections() {
@@ -137,23 +138,18 @@ class App {
 
     getMaterials() {
         this.materialLoader.setPath('materialy/');
-        const materials = config.materials.map(async (item) => {
-            return this.materialLoader.load(item + config.extension, async (material) => {
-                const object = await this.makeMaterial(material, item)
-                return await object;
+        config.materials.map((item, index) => {
+            this.materialLoader.load(item + config.extension, (material) => {
+
+                this.materials[item] = new THREE.MeshStandardMaterial({ map: material, color: 'white', side: THREE.DoubleSide });
+                if (index + 1 === config.materials.length) {
+                    this.setMaterials();
+                }
             });
         });
-        console.log(materials);
-        Promise.all(materials).then((completed) => { this.materials = completed; this.setMaterials() });
     };
 
-    async makeMaterial(material, item) {
-        const texture = {
-            name: item,
-            material: new THREE.MeshStandardMaterial({ map: material, color: 'white', side: THREE.DoubleSide })
-        };
-        return await texture;
-    }
+
 
     getModel() {
         this.loader.setPath(this.path);
