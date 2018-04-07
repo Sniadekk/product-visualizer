@@ -6,23 +6,23 @@ const config = {
 };
 
 const materialConfig = [
-    { material: "bialy" },
+    { material: "niebieski" },
     { material: "niebieski" },
     { material: "okleina" },
-    { material: "szary" },
-    { material: "zolty" },
+    { material: "okleina" },
     { material: "zolty" },
     { material: "okleina" },
     { material: "zolty" },
+    { material: "okleina" },
     { material: "okleina" }
 ];
 
 class App {
     constructor() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xeaeaea);
+        this.scene.background = new THREE.Color(0xcaccce);
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.z = 2;
+        this.camera.position.z = 1.65;
         this.scene.add(this.camera);
 
         this.screenHeight = window.innerHeight;
@@ -31,8 +31,16 @@ class App {
         this.path = config.modelPath;
 
 
-        this.ambientLight = new THREE.AmbientLight(0xe5e5e5);
-        this.scene.add(this.ambientLight);
+        this.ambientLightOne = new THREE.AmbientLight(0xffffff, 1.0);
+        this.ambientLightTwo = new THREE.AmbientLight(0xffffff, 0.5);
+
+        this.scene.add(this.ambientLightOne, this.ambientLightTwo);
+
+        this.directionalLightOne = new THREE.DirectionalLight(0xffffff, 0.4);
+        this.camera.add(this.directionalLightOne);
+        this.lightHelper = new THREE.DirectionalLightHelper(this.directionalLightOne, 10);
+        this.directionalLightOne.position.set(2, 2, 1);
+
 
         this.mouse = new THREE.Vector2(0, 0);
         this.raycaster = new THREE.Raycaster();
@@ -54,6 +62,7 @@ class App {
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.animate = this.animate.bind(this);
         this.listeners = this.listeners.bind(this);
+        this.makeAList();
         this.listeners();
         this.getModel();
         this.animate();
@@ -85,15 +94,14 @@ class App {
     }
 
     makeAList() {
-        const materials = ["bialy.JPG", "niebieski.JPG", "okleina.JPG", "szary.JPG", "zolty.JPG"];
         const list = document.getElementById("materials-list");
-        for (let x = 0; x < materials.length; x++) {
+        for (let x = 0; x < config.materials.length; x++) {
             let li = document.createElement("li");
 
             let widthMultiplayer = (this.screenWidth < 600 ? 1.0 : 0.125)
             let heightMultiplayer = (this.screenWidth < 600 ? 0.050 : 0.125)
             let image = new Image(this.screenWidth * widthMultiplayer, this.screenHeight * heightMultiplayer);
-            image.src = "materialy/" + materials[x];
+            image.src = "materialy/" + config.materials[x] + config.extension;
 
             image.addEventListener('click', () => {
                 let currentImage = image.src;
@@ -106,7 +114,6 @@ class App {
     }
 
     setMaterials() {
-        console.log(this.materials);
         this.object.children.map((object, index) => object.material = this.materials[materialConfig[index].material]);
     }
 
@@ -140,8 +147,9 @@ class App {
         this.materialLoader.setPath('materialy/');
         config.materials.map((item, index) => {
             this.materialLoader.load(item + config.extension, (material) => {
+                console.log(material);
 
-                this.materials[item] = new THREE.MeshStandardMaterial({ map: material, color: 'white', side: THREE.DoubleSide });
+                this.materials[item] = new THREE.MeshStandardMaterial({ map: material, color: 'white', side: THREE.DoubleSide, });
                 if (index + 1 === config.materials.length) {
                     this.setMaterials();
                 }
