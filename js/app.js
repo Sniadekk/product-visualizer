@@ -147,8 +147,7 @@ class App {
         this.materialLoader.setPath('materialy/');
         config.materials.map((item, index) => {
             this.materialLoader.load(item + config.extension, (material) => {
-                console.log(material);
-
+                material.wrapT=2;
                 this.materials[item] = new THREE.MeshStandardMaterial({ map: material, color: 'white', side: THREE.DoubleSide, });
                 if (index + 1 === config.materials.length) {
                     this.setMaterials();
@@ -157,22 +156,29 @@ class App {
         });
     };
 
+    setMaterial(image) {
+        console.log('x');
+        this.materialLoader.setPath('');
+        this.currentMaterial = this.materialLoader.load(image, (texture) => {
+            this.currentObject.material = new THREE.MeshStandardMaterial({ map: texture, color: 'white', side: THREE.DoubleSide, vertexColors: THREE.FaceColors });
+        });
+    }
 
 
     getModel() {
-        this.loader.setPath(this.path);
-        this.loader.load(this.path, (object) => {
-            this.scene.add(object);
-            this.object = object;
-            this.object.rotateX(270 * Math.PI / 180);
-            this.object.position.y = -0.35;
-            this.object.name = "model";
-            this.getMaterials();
-        });
+                this.loader.setPath(this.path);
+                this.loader.load(this.path, (object) => {
+                    this.scene.add(object);
+                    this.object = object;
+                    this.object.rotateX(270 * Math.PI / 180);
+                    this.object.position.y = -0.35;
+                    this.object.name = "model";
+                    this.getMaterials();
+                });
 
-    };
+            };
 
 
-}
+    }
 
-const app = new App();
+    const app = new App();
