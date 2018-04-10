@@ -42,18 +42,20 @@ class App {
 
     this.path = config.modelPath;
 
-    this.ambientLightOne = new THREE.AmbientLight(0xffffff, 1.0);
-    this.ambientLightTwo = new THREE.AmbientLight(0xffffff, 0.2);
+    //this.ambientLightOne = new THREE.AmbientLight(0xffffff, 1.0);
+    this.ambientLightTwo = new THREE.AmbientLight(0xffffff, 0.4);
 
-    this.scene.add(this.ambientLightOne, this.ambientLightTwo);
+    this.scene.add( this.ambientLightTwo);
 
-    this.spotLight = new THREE.SpotLight(0xffffff);
-    this.spotLight.light = new THREE.LightShadow(
-      new THREE.PerspectiveCamera(50, 1, 1200, 2500)
-    );
+    this.spotLight = new THREE.SpotLight(0x888888, 1.5 );
     this.spotLight.castShadow = true;
+    this.spotLight.shadow.camera.far = 3500;
 
-    this.spotLight.position.set(1, 2, 5);
+    this.spotLight.shadow.bias = 0.001;
+    this.spotLight.shadow.mapSize.width = 4096;
+    this.spotLight.shadow.mapSize.height = 4096;
+
+    this.spotLight.position.set(3, 1.5, 5);
     this.spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
     this.scene.add(this.spotLightHelper, this.spotLight);
 
@@ -63,7 +65,7 @@ class App {
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.autoUpdate = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.loader = new THREE.TDSLoader();
     this.materialLoader = new THREE.TextureLoader();
@@ -83,10 +85,16 @@ class App {
 
     this.animate = this.animate.bind(this);
     this.listeners = this.listeners.bind(this);
+
+
     this.controls = new THREE.OrbitControls(
       this.camera,
-      this.renderer.domElement
+      this.renderer.domElement,
     );
+    this.controls.enablePan = false;
+    this.controls.maxDistance = 4;
+    this.controls.maxPolarAngle = Math.PI/3;
+
 
     this.makeWalls();
     this.makeAList();
@@ -220,7 +228,7 @@ class App {
       this.scene.add(object);
       this.object = object;
       this.object.rotateX(270 * Math.PI / 180);
-      this.object.position.y = 2;
+      this.object.position.y = 0;
       this.object.children.map((child) => child.castShadow = true);
       this.object.name = "model";
       this.getMaterials();
