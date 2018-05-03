@@ -5,8 +5,6 @@ const config = {
     "okleina",
     "szary",
     "zolty",
-    "jasnybraz",
-    "szarybraz"
   ],
   extension: ".jpg",
   modelPath: "/modele/komodaHBasic.3ds"
@@ -121,7 +119,7 @@ class App {
       10000
     );
     //Setting it up in the "middle"
-    this.camera.position.set(0, 0, 3);
+    this.camera.position.set(0, 0, 2);
     this.scene.add(this.camera);
 
 
@@ -222,6 +220,7 @@ class App {
   makeAList() {
     const list = document.getElementById("materials-list");
     for (let x = 0; x < config.materials.length; x++) {
+      if (config.materials[x] === "okleina") continue;
       let li = document.createElement("li");
 
       let widthMultiplayer = this.screenWidth < 600 ? 1.0 : 0.125;
@@ -243,11 +242,13 @@ class App {
   }
 
   setMaterials() {
+    console.log('xx');
     this.object.children.map((object, index) => {
       const material = this.materials[models[this.model].setup[index].material]
       if (typeof material !== "undefined")
         object.material = material;
     });
+    disableLoadingModal();
     this.animate();
   }
 
@@ -279,8 +280,9 @@ class App {
 
   getMaterials() {
     this.materialLoader.setPath("materialy/");
-    config.materials.map((item, index) => {
-      this.materialLoader.load(item + config.extension, material => {
+    const x = config.materials.map((item, index) => {
+      this.materialLoader.load(item + config.extension, (material) => {
+
         material.wrapS = THREE.RepeatWrapping;
         material.wrapT = THREE.RepeatWrapping;
         this.materials[item] = new THREE.MeshStandardMaterial({
@@ -290,12 +292,9 @@ class App {
           lightMapIntensity: 2,
           side: THREE.DoubleSide
         });
+        if (Object.keys(this.materials).length === config.materials.length) this.setMaterials();
       });
     });
-    setTimeout(() => {
-      this.setMaterials();
-      this.animate();
-    }, 3000);
   }
 
   setMaterial(image) {
@@ -329,7 +328,6 @@ class App {
       this.object.name = "model";
       // this.camera.lookAt(this.object.position);
       this.getMaterials();
-      this.animate();
     });
   }
 }
@@ -340,7 +338,7 @@ function init() {
   const threeDiv = document.querySelector("#three-app");
   const closeButton = document.querySelector("#three-app-close_button");
   const modal = document.querySelector("#three-app-modal");
-
+  const menuButton = document.querySelector("#three-app-materials_list-button");
   document.querySelector("#app").addEventListener("click", (evt) => {
     if (didAppStart === false) {
       const model = evt.target.value;
@@ -357,9 +355,22 @@ function init() {
     toggleApp();
   });
 
+  menuButton.addEventListener("click", toggleMenu);
 
   function toggleApp() {
     threeDiv.classList.add("not-active");
     modal.classList.add("not-active");
   }
+
+
 }
+
+  function disableLoadingModal(){
+    const loadingModal = document.querySelector("#three-app-loading");
+    loadingModal.classList.add("not-active");
+  }
+
+  function toggleMenu(){
+    const menu = document.querySelector("#materials-list");
+    menu.classList.toggle("not-active");
+  }
