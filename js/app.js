@@ -1,64 +1,135 @@
 const config = {
-  materials: [
-    "bialy",
-    "niebieski",
-    "okleina",
-    "szary",
-    "zolty",
-    "jasnybraz",
-    "szarybraz"
-  ],
+  materials: ["bialy", "niebieski", "okleina", "szary", "zolty"],
   extension: ".jpg",
   modelPath: "/modele/komodaHBasic.3ds"
 };
 
-const materialConfig = [
-  { material: "niebieski" },
-  { material: "niebieski" },
-  { material: "okleina" },
-  { material: "okleina" },
-  { material: "zolty" },
-  { material: "okleina" },
-  { material: "zolty" },
-  { material: "okleina" },
-  { material: "okleina" }
-];
+const models = {
+  komodaHBasicWiszaca: {
+    setup: [
+      { material: "niebieski" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "bialy" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" }
+    ]
+  },
+  komodaHLong: {
+    setup: [
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "bialy" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "niebieski" },
+      { material: "okleina" },
+      { material: "niebieski" },
+      { material: "okleina" },
+      { material: "okleina" }
+    ]
+  },
+
+  komodaHHigh: {
+    setup: [
+      { material: "okleina" },
+      { material: "niebieski" },
+      { material: "niebieski" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" }
+    ]
+  },
+
+  komodaHBasic: {
+    setup: [
+      { material: "niebieski" },
+      { material: "niebieski" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "zolty" },
+      { material: "okleina" },
+      { material: "zolty" },
+      { material: "okleina" },
+      { material: "okleina" }
+    ]
+  },
+
+  komodaHLongWiszaca: {
+    setup: [
+      { material: "okleina" },
+      { material: "bialy" },
+      { material: "bialy" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "bialy" },
+      { material: "bialy" },
+      { material: "okleina" },
+      { material: "okleina" },
+      { material: "okleina" }
+    ]
+  }
+};
 
 class App {
-  constructor() {
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xffffff);
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      100
-    );
-    this.camera.position.set(0.25, 2, 2.6244494590879888);
-    this.scene.add(this.camera);
-
+  constructor(model) {
+    //container of our application
+    this.appContainer = document.querySelector("#three-app");
+    //check whether screen it is mobile screen or not
+    this.screenMultiplayer = window.innerWidth < 800 ? 1.0 : 0.8;
+    //size properties of our application container
+    this.containerHeight = window.innerHeight * this.screenMultiplayer;
+    this.containerWidth = window.innerWidth * this.screenMultiplayer;
+    //screen size
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
 
-    this.path = config.modelPath;
+    this.model = model;
+    //Scene
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xffffff);
+    //User's camera
+    this.camera = new THREE.PerspectiveCamera(
+      45,
+      this.containerWidth / this.containerHeight,
+      0.1,
+      10000
+    );
+    //Setting up nice look depending on screen resolution
+    if (this.screenMultiplayer === 1) {
+      this.camera.position.set(0, 0, 5);
+    } else {
+      this.camera.position.set(0, 0, 2.5);
+    }
+    this.scene.add(this.camera);
 
-    //this.ambientLightOne = new THREE.AmbientLight(0xffffff, 1.0);
-    this.ambientLightTwo = new THREE.AmbientLight(0xffffff, 0.4);
+    //this.path = config.modelPath;
+    this.path = "/modele/" + model + ".3ds";
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
 
-    this.scene.add( this.ambientLightTwo);
+    this.scene.add(this.ambientLight);
 
-    this.spotLight = new THREE.SpotLight(0x888888, 1.5 );
-    this.spotLight.castShadow = true;
+    this.spotLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    this.spotLight.castShadow = false;
     this.spotLight.shadow.camera.far = 3500;
+    this.spotLight.angle = 2;
 
     this.spotLight.shadow.bias = 0.001;
-    this.spotLight.shadow.mapSize.width = 4096;
-    this.spotLight.shadow.mapSize.height = 4096;
+    this.spotLight.shadow.mapSize.width = 2048;
+    this.spotLight.shadow.mapSize.height = 2048;
 
-    this.spotLight.position.set(3, 1.5, 5);
-    this.spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
-    this.scene.add(this.spotLightHelper, this.spotLight);
+    this.spotLight.position.set(6, 7, 8);
+    this.scene.add(this.spotLight);
 
+    //Vector to hold mouse position
     this.mouse = new THREE.Vector2(0, 0);
     this.raycaster = new THREE.Raycaster();
 
@@ -79,24 +150,28 @@ class App {
     });
 
     this.materials = {};
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    document.body.appendChild(this.renderer.domElement);
+    //setting size of renderer equal to app container size
+    this.renderer.setSize(this.containerWidth, this.containerHeight);
+    this.appContainer.appendChild(this.renderer.domElement);
 
+    //binding async functions
     this.animate = this.animate.bind(this);
     this.listeners = this.listeners.bind(this);
 
-
+    //controller of mouse/touch/keyboard/etc.
     this.controls = new THREE.OrbitControls(
       this.camera,
-      this.renderer.domElement,
+      this.renderer.domElement
     );
-    this.controls.enablePan = false;
+    this.controls.minDistance = 1;
     this.controls.maxDistance = 4;
-    this.controls.maxPolarAngle = Math.PI/3;
+    this.controls.maxPolarAngle = Math.PI / 2;
 
+    this.appContainer.classList.toggle("not-active");
+    document.querySelector("#list-container").classList.toggle("not-active");
 
-    this.makeWalls();
+    //  this.makeWalls();
     this.makeAList();
     this.listeners();
     this.getModel();
@@ -110,12 +185,22 @@ class App {
   listeners() {
     window.addEventListener("click", event => {
       event.preventDefault();
-      this.mouse.x = event.clientX / window.innerWidth * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      this.mouse.x =
+        (event.clientX - this.renderer.domElement.offsetLeft) /
+          this.screenWidth *
+          2 -
+        1;
+      this.mouse.y =
+        -(
+          (event.clientY - this.renderer.domElement.offsetTop) /
+          this.screenHeight
+        ) *
+          2 +
+        1;
       this.checkIntersections();
     });
 
-    window.addEventListener("resize", function() {
+    window.addEventListener("resize", () => {
       this.screenHeight = window.innerHeight;
       this.screenWidth = window.innerWidth;
       this.renderer.setSize(this.screenWidth, this.screenHeight, true);
@@ -132,6 +217,8 @@ class App {
   makeAList() {
     const list = document.getElementById("materials-list");
     for (let x = 0; x < config.materials.length; x++) {
+      if (config.materials[x] === "okleina") continue;
+
       let li = document.createElement("li");
 
       let widthMultiplayer = this.screenWidth < 600 ? 1.0 : 0.125;
@@ -154,9 +241,11 @@ class App {
 
   setMaterials() {
     this.object.children.map((object, index) => {
-      if (typeof this.materials[materialConfig[index].material] !== "undefined")
-        object.material = this.materials[materialConfig[index].material];
+      const material = this.materials[models[this.model].setup[index].material];
+      if (typeof material !== "undefined") object.material = material;
     });
+
+    disableLoadingModal();
     this.animate();
   }
 
@@ -166,6 +255,7 @@ class App {
     let intersects = this.raycaster.intersectObjects(this.scene.children, true);
     if (intersects.length > 0) {
       let intersectedObject = intersects[0];
+      if (intersectedObject.object.name.includes("wall")) return;
       if (intersectedObject.object.userData.savedMaterial === undefined) {
         this.currentObject = intersectedObject.object;
         intersectedObject.object.userData.savedMaterial =
@@ -187,27 +277,31 @@ class App {
 
   getMaterials() {
     this.materialLoader.setPath("materialy/");
-    config.materials.map((item, index) => {
+    const x = config.materials.map((item, index) => {
       this.materialLoader.load(item + config.extension, material => {
+
+        
         material.wrapS = THREE.RepeatWrapping;
         material.wrapT = THREE.RepeatWrapping;
         this.materials[item] = new THREE.MeshStandardMaterial({
           visible: true,
           map: material,
           color: "white",
-          side: THREE.DoubleSide
-        });
+          side: THREE.DoubleSide,
+          vertexColors: THREE.FaceColors,
+          metalness: 0.35,
+          emissiveIntensity: 0
+        })
+        if (Object.keys(this.materials).length === config.materials.length)
+          this.setMaterials();
       });
     });
-    setTimeout(() => {
-      this.setMaterials();
-      this.animate();
-    }, 3000);
   }
 
   setMaterial(image) {
     this.materialLoader.setPath("");
     this.currentMaterial = this.materialLoader.load(image, texture => {
+  
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       this.currentObject.material = new THREE.MeshStandardMaterial({
@@ -228,13 +322,60 @@ class App {
       this.scene.add(object);
       this.object = object;
       this.object.rotateX(270 * Math.PI / 180);
-      this.object.position.y = 0;
-      this.object.children.map((child) => child.castShadow = true);
+      this.object.position.y = -0.5;
+      this.object.children.map(child => {
+        child.castShadow = true;
+      });
       this.object.name = "model";
+      // this.camera.lookAt(this.object.position);
       this.getMaterials();
-      this.animate();
     });
   }
 }
+init();
+//const app = new App();
+function init() {
+  let didAppStart = false;
+  const threeDiv = document.querySelector("#three-app");
+  const closeButton = document.querySelector("#three-app-close_button");
+  const modal = document.querySelector("#three-app-modal");
+  const menuButton = document.querySelector("#three-app-materials_list-button");
+  const html = document.getElementsByTagName("html")[0];
 
-const app = new App();
+  document.querySelector("#app").addEventListener("click", evt => {
+    if (didAppStart === false) {
+      const model = evt.target.value;
+      const app = new App(model);
+    }
+    toggleScroll(html);
+    modal.classList.remove("not-active");
+    threeDiv.classList.remove("not-active");
+    didAppStart = true;
+  });
+
+  closeButton.addEventListener("click", () => {
+    toggleScroll(html);
+    toggleApp();
+  });
+
+  menuButton.addEventListener("click", toggleMenu);
+
+  function toggleApp() {
+    threeDiv.classList.add("not-active");
+    modal.classList.add("not-active");
+  }
+}
+
+function disableLoadingModal() {
+  const loadingModal = document.querySelector("#three-app-loading");
+  loadingModal.classList.add("not-active");
+}
+
+function toggleMenu() {
+  const menu = document.querySelector("#materials-list");
+  menu.classList.toggle("not-active");
+}
+
+function toggleScroll(element) {
+  element.classList.toggle("scroll_hidden");
+}
