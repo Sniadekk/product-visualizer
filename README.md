@@ -7,5 +7,5 @@ Here is an example. <br /> <br /> <br />
 
 
 
-<a href="http://46.101.196.59/dobrroteka/www.do-m.pl/pol_m_komody-151.html">Live version can be found here. </a>
+<a href="http://46.101.196.59/dobrroteka/www.do-m.pl/pol_m_komody-151.html">Live version can be found here. </a> <br/>
 Just simply choose some furniture and then toggle 3D mode.
