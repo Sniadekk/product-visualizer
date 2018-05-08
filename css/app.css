@@ -82,7 +82,7 @@
     padding: 0;
     margin: 0;
     justify-content: center;
-
+    
 }
 
 #materials-list>li {
@@ -91,18 +91,21 @@
     font-size: 1.4rem;
     overflow: hidden;
     color: black;
+   position: relative;
+   
 }
 
 #materials-list>li img {
     width: 100%!important;
     height: 100px!important;
     z-index: -1;
+    user-select: none; 
 }
 
-#materials-list>li:hover {
-    opacity: 0.8;
+#materials-list>li:hover{
     cursor: pointer;
 }
+
 
 .list-menu {
     display: none!important;
@@ -125,10 +128,12 @@
     /* justify-content: center;
     align-content: center; */
     font-size: 4rem;
+    
     z-index: 1000;
 }
 
 #three-app-materials_list-button {
+    user-select: none; 
     border: 1px solid black;
     background-color: white;
     width: 100%;
